@@ -3,7 +3,7 @@ include "category.php";
 
 $category = new Category(1, "Électronique", "Produits électroniques divers");
 
-$product = new Product(100, "Smartphone",['https://picsum.photos/200/300'], 299,'A nice T-shirt', 50, $category->getId());
+$product = new Product(100, "T-shirt",['https://picsum.photos/200/300'], 299,'A nice T-shirt', 50, $category->getId());
 
 // Affichage
 echo "Produit : " . $product->getName() . "<br>";
