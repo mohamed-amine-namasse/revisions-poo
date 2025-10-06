@@ -56,10 +56,20 @@ class Product
         if (!$product) {
             return false; // produit non trouvé
         }
-
+        $stmt = $conn->prepare("SELECT * FROM photos WHERE product_id = :id ");
+        $stmt->execute([':id' => $id]);
+        $product_photo = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        print_r($product_photo);
+        
+            
+        
+        if (!$product_photo) {
+            return false; // produit non trouvé
+        }
            
             $this->id = $product['id'];
             $this->name = $product['name'];
+            foreach($product_photo as $item){$this->photos[]=$item['filepath'];}
             $this->price = $product['price'];
             $this->description = $product['description'];
             $this->quantity = $product['quantity'];
@@ -271,5 +281,7 @@ class Category
 
 //Partie test 
 $obj=new Product();
-$obj->connect(7);
+$obj->connect(59);
+echo "<br>";
+echo "<br>";
 print_r($obj->getAllinfos()); //on recupere tous ses infos
