@@ -43,7 +43,7 @@ class Product
         die("Erreur de connexion PDO : " . $e->getMessage());
          }
     }
-     // Connexion / Authentification
+     // Connexion à la BDD
     public function connect(int $id): bool
     {
         $conn = $this->getConnection();
