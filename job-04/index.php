@@ -59,7 +59,7 @@ class Product
         $stmt = $conn->prepare("SELECT * FROM photos WHERE product_id = :id ");
         $stmt->execute([':id' => $id]);
         $product_photo = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        print_r($product_photo);
+       // print_r($product_photo);
         
             
         
@@ -281,7 +281,5 @@ class Category
 
 //Partie test 
 $obj=new Product();
-$obj->connect(59);
-echo "<br>";
-echo "<br>";
+$obj->connect(7);
 print_r($obj->getAllinfos()); //on recupere tous ses infos
