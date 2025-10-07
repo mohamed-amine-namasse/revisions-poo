@@ -350,7 +350,7 @@ class Product
            'updatedAt'=> $this-> updatedAt
         ];
     }
-    public function findOneById(int $id):Product|bool
+     public function findOneById(int $id):Product|bool
     {   
 
     try {
@@ -402,7 +402,3 @@ class Product
     
  }
 }
-//Partie test
-
-$product = new Product();
-var_dump($product->findOneById(7));
