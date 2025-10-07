@@ -89,7 +89,12 @@ class Category
     public function setUpdatedAt(DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
-    }}
+    }
+     public function getProducts():array
+     {
+
+     }
+}
 
 class Product
 {
@@ -249,11 +254,11 @@ class Product
         $stmt = $conn->prepare("SELECT * FROM category WHERE id = :id LIMIT 1");
         $stmt->execute([':id' => $this->category_id]);
         $category = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        
         if (!$category) {
             return null; // Aucun résultat trouvé
         }
-        
+
         // Création de l'objet Category
         return new Category(
             $category['id'],
@@ -309,13 +314,3 @@ class Product
     }
 
 }
-
-
-
-//Partie test 
-$product = new Product();
-$product->connect(7); // Charge un produit avec ID 7
-
-$category = $product->getCategory();
-
-var_dump($category);
