@@ -56,10 +56,10 @@ class Product
         if (!$product) {
             return false; // produit non trouvé
         }
-        $stmt = $conn->prepare("SELECT * FROM photos WHERE product_id = :id ");
+        $stmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id ");
         $stmt->execute([':id' => $id]);
         $product_photo = $stmt->fetchAll(PDO::FETCH_ASSOC);
-       // print_r($product_photo);
+        //print_r($product_photo);
         
             
         
