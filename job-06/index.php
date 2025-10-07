@@ -90,10 +90,48 @@ class Category
     {
         $this->updatedAt = $updatedAt;
     }
-     public function getProducts():array
-     {
+    public function getProducts(): array
+{
+    $products = [];
 
-     }
+    try {
+        $conn = $this->getConnection();
+
+        $stmt = $conn->prepare("SELECT * FROM product WHERE category_id = :category_id");
+        $stmt->execute([':category_id' => $this->id]);
+        $productDataList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($productDataList as $data) {
+            //  Récupérer les photos du produit
+            $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :product_id");
+            $photoStmt->execute([':product_id' => $data['id']]);
+            $photoRows = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
+            $photos = [];
+            foreach ($photoRows as $photo) {
+                $photos[] = $photo['filepath'];
+            }
+            $product = new Product(
+                $data['id'],
+                $data['name'],
+                $photos,
+                $data['price'],
+                $data['description'],
+                $data['quantity'],
+                $data['category_id'],
+                new DateTime($data['created_at']),
+                new DateTime($data['updated_at'])
+            );
+
+            $products[] = $product;
+        }
+    } catch (Exception $e) {
+        // Affiche ou logue l’erreur si besoin
+        echo "Erreur lors de la récupération des produits : " . $e->getMessage();
+    }
+
+    return $products;
+    }
+
 }
 
 class Product
@@ -314,3 +352,8 @@ class Product
     }
 
 }
+
+//Partie test
+$category = new Category(2, "T-Shirts", "Vêtements d'été"); // Id = 2
+$products = $category->getProducts();
+var_dump($products);
