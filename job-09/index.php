@@ -18,6 +18,8 @@ class Category
     // Constructeur
     public function __construct(int $id,string $name,string $description,DateTime $createdAt=new DateTime(),DateTime $updatedAt=new DateTime())
     {
+        
+    
     $this->id = $id;
     $this->name = $name;
     $this->description = $description;
@@ -152,8 +154,12 @@ class Product
     
 
     // Constructeur
-    public function __construct( int $id = 0, string $name = "", array $photos = [], int $price = 0, string $description = "", int $quantity = 0,int $category_id = 0, DateTime $createdAt = new DateTime(),DateTime $updatedAt = new DateTime() )
-    {
+    public function __construct( int|null $id = 0, string $name = "", array $photos = [], int $price = 0, string $description = "", int $quantity = 0,int $category_id = 0, DateTime $createdAt = new DateTime(),DateTime $updatedAt = new DateTime() )
+    {   if($id==null){
+            $id=-1;
+            $this->id=$id;
+        }
+        
         $this->id = $id;
         $this->name = $name;
         $this->photos = $photos;
@@ -505,5 +511,8 @@ class Product
 }
 
 //Partie test
-$product = new Product(35,'Milk',['https://picsum.photos/900/300'],5000,'A fresh milk',10,2,new DateTime(), new DateTime());
+$product = new Product(null,'Milk',['https://picsum.photos/900/300'],5000,'A fresh milk',10,2,new DateTime(), new DateTime());
+print_r($product->getAllInfos()); 
+echo "<br>";
+echo "<br>";
 var_dump($product->create());
