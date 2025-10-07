@@ -401,4 +401,54 @@ class Product
 
     
  }
+ public function findAll():array
+    {   
+     $products = [];
+     try {
+        $conn = $this->getConnection();
+
+        // 1. Requête pour recuperer tous les données des produits
+        $stmt = $conn->prepare("SELECT * FROM product ");
+        $stmt->execute();
+        $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($productRows as $row) {
+        // 2. Requête photos du produit
+        $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id ");
+        $photoStmt->execute([':id' => $row['id']]);
+        $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $photos = [];
+        foreach ($photoData as $photo) {
+            $photos[] = $photo['filepath'];
+        }
+        // Créer une instance Product
+            $product = new Product(
+                $row['id'],
+                $row['name'],
+                $photos,
+                $row['price'],
+                $row['description'],
+                $row['quantity'],
+                $row['category_id'],
+                new DateTime($row['created_at']),
+                new DateTime($row['updated_at'])
+            );
+        $products[] = $product;
+        } }
+    
+    catch (Exception $e) {
+        
+        echo "Erreur lors de la récupération du produit : " . $e->getMessage();
+        
+    }
+    return $products;
+
+    
+ }
 }
+
+//Partie test
+
+$product = new Product();
+var_dump($product->findAll());
