@@ -220,7 +220,7 @@ class Product
             ];
         }
         public function findOneById(int $id):Product|bool
-        {   
+    {   
 
         try {
             $conn = $this->getConnection();
@@ -271,7 +271,7 @@ class Product
         
     }
     public function findAll():array
-        {   
+    {   
         $products = [];
         try {
             $conn = $this->getConnection();

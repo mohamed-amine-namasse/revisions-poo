@@ -13,8 +13,10 @@ var_dump($product);
 echo "<br>";
 echo "<br>";
 $clothing=new Clothing('XL','rouge',500);
-
 var_dump($clothing);
-
+echo "<br>";
+echo "<br>";
+$electronic=new Electronic('TV',22);
+var_dump($electronic);
 
 
