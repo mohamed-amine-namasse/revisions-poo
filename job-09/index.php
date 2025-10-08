@@ -511,7 +511,7 @@ class Product
 }
 
 //Partie test
-$product = new Product(null,'Milk',['https://picsum.photos/900/300'],5000,'A fresh milk',10,2,new DateTime(), new DateTime());
+$product = new Product(null,'Milk2',['https://picsum.photos/9000/3000'],000,'A fresher milk',10,2,new DateTime(), new DateTime());
 print_r($product->getAllInfos()); 
 echo "<br>";
 echo "<br>";

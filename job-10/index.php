@@ -512,11 +512,10 @@ public function update(): Product|false
         $conn = $this->getConnection();
 
         // 1. mise à jour du produit dans la table "product"
-        $stmt = $conn->prepare(" UPDATE product SET name=:name,photos=:photos,price=:price,description=:description,quantity=:quantity,category_id=:categpry_id,created_at=:created_at,updated_at=:updated_at" );
-
+        $stmt = $conn->prepare(" UPDATE product SET name=:name,price=:price,description=:description,quantity=:quantity,category_id=:category_id,created_at=:created_at,updated_at=:updated_at WHERE id = :id ");
         $success = $stmt->execute([
+            ':id'=>$this->id,
             ':name' => $this->name,
-            ':photos' => $this->photos,
             ':price' => $this->price,
             ':description' => $this->description,
             ':quantity' => $this->quantity,
@@ -529,21 +528,19 @@ public function update(): Product|false
             return false;
         }
 
-        // 2. Récupérer l'ID généré automatiquement
-        $this->id = (int)$conn->lastInsertId();
-
-        // 3. Insérer les photos si présentes
+        
+        
+        // 2.Mise à jour des photos 
         if (!empty($this->photos)) {
             $photoStmt = $conn->prepare("
-                INSERT INTO photos (filepath,product_id)
-                VALUES ( :filepath,:product_id)
+                UPDATE  photos SET filepath=:filepath WHERE product_id=:product_id
             ");
 
             foreach ($this->photos as $filepath) {
                 $photoStmt->execute([
-                    
                     ':product_id' => $this->id,
                     ':filepath' => $filepath
+                    
                 ]);
             }
         }
@@ -560,8 +557,19 @@ public function update(): Product|false
 }
 
 //Partie test
-$product = new Product(null,'Milk',['https://picsum.photos/900/300'],5000,'A fresh milk',10,2,new DateTime(), new DateTime());
-print_r($product->getAllInfos()); 
+$product = new Product(null,'Jus',['https://picsum.photos/957/300'],600,'Orange Juice',10,2,new DateTime(), new DateTime());
+var_dump($product);
 echo "<br>";
 echo "<br>";
-var_dump($product->create());
+$product->create(); 
+var_dump($product);
+echo "<br>";
+echo "<br>";
+$product->setName('Juice');
+$product->setQuantity(2);
+var_dump($product);
+echo "<br>";
+$product->update();
+
+
+
