@@ -17,7 +17,7 @@ class Clothing extends Product
     // Constructeur
     public function __construct(string $size,string $color,int $material_fee)
     {
-       
+        parent::__construct();
         $this->size = $size;
         $this->color = $color;
         $this->material_fee = $material_fee;
