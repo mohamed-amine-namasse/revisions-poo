@@ -11,4 +11,7 @@ require 'electronic.php';
 
 $clothing=new Clothing();
 var_dump($clothing->findOneById(88));
-
+echo "<br>";
+echo "<br>";
+$electronic=new Electronic();
+var_dump($electronic->findOneById(89));

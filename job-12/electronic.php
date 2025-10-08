@@ -20,7 +20,19 @@ class Electronic extends Product
         $this->warranty_fee = $warranty_fee;
         
     }
-    public function findOneById(int $id):Product|bool
+    // Méthode privée pour obtenir une connexion PDO
+        private function getConnection(): PDO
+        {
+            try {
+            $pdo = new PDO("mysql:host=$this->db_server;dbname=$this->db_name;", $this->db_user, $this->db_password);
+            // Active le mode exception pour les erreurs SQL
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $pdo; }   
+            catch (PDOException $e) {
+            die("Erreur de connexion PDO : " . $e->getMessage());
+            }
+        }
+    public function findOneById(int $id):Electronic|bool
     {   
 
         try {
@@ -44,9 +56,13 @@ class Electronic extends Product
             foreach ($photoData as $photo) {
                 $photos[] = $photo['filepath'];
             }
+            // 3. Requête infos de electronic
+            $electonicStmt = $conn->prepare("SELECT * FROM electronic WHERE product_id = :id");
+            $electonicStmt->execute([':id' => $id]);
+            $electronic = $electonicStmt->fetch(PDO::FETCH_ASSOC);  
 
             // Création de l'objet product
-            return new Product(
+            return new Electronic(
                 $product['id'],
                 $product['name'],
                 $photos,
@@ -55,7 +71,10 @@ class Electronic extends Product
                 $product['quantity'],
                 $product['category_id'],
                 new DateTime($product['created_at']),
-                new DateTime($product['updated_at'])
+                new DateTime($product['updated_at']),
+                $electronic['brand'],
+                $electronic['warranty_fee']
+              
             );
         
             
