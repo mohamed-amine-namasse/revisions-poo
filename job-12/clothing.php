@@ -23,6 +23,18 @@ class Clothing extends Product
         $this->material_fee = $material_fee;
         
     }
+    // Méthode privée pour obtenir une connexion PDO
+        private function getConnection(): PDO
+        {
+            try {
+            $pdo = new PDO("mysql:host=$this->db_server;dbname=$this->db_name;", $this->db_user, $this->db_password);
+            // Active le mode exception pour les erreurs SQL
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $pdo; }   
+            catch (PDOException $e) {
+            die("Erreur de connexion PDO : " . $e->getMessage());
+            }
+        }
      // Getters et Setters
     public function getSize(): string
     {
@@ -55,7 +67,7 @@ class Clothing extends Product
         $this->type = $type;
     }
 
-    public function findOneById(int $id):Product|bool
+    public function findOneById(int $id):Clothing|bool
     {   
 
         try {
@@ -79,9 +91,16 @@ class Clothing extends Product
             foreach ($photoData as $photo) {
                 $photos[] = $photo['filepath'];
             }
+            // 3. Requête infos du clothing
+            $clothingStmt = $conn->prepare("SELECT * FROM clothing WHERE product_id = :id");
+            $clothingStmt->execute([':id' => $id]);
+            $clothing = $clothingStmt->fetch(PDO::FETCH_ASSOC);
 
-            // Création de l'objet product
-            return new Product(
+           
+
+
+            // Création de l'objet clothing
+            return new Clothing(
                 $product['id'],
                 $product['name'],
                 $photos,
@@ -90,7 +109,10 @@ class Clothing extends Product
                 $product['quantity'],
                 $product['category_id'],
                 new DateTime($product['created_at']),
-                new DateTime($product['updated_at'])
+                new DateTime($product['updated_at']),
+                $clothing['size'],
+                $clothing['color'],
+                $clothing['material_fee']
             );
         
             
@@ -255,3 +277,4 @@ class Clothing extends Product
     
 
 }
+
