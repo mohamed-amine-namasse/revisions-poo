@@ -7,16 +7,13 @@ require 'category.php';
 require 'clothing.php';
 require 'electronic.php';
 
-$category=new Category(4,'Vêtements', 'tous les vêtements');
-$product=new Product(77,'sac',['https://picsum.photos/957/300'],100,'petit sac',2,$category->getId(),new DateTime(),new DateTime());
-var_dump($product);
-echo "<br>";
-echo "<br>";
-$clothing=new Clothing('XL','rouge',500);
+$category1=new Category(4,'Vêtements', 'tous les vêtements');
+$category2=new Category(1,'Electronique', 'Produits électroniques divers');
+
+$clothing=new Clothing(77,'chemise',['https://picsum.photos/957/300'],100,'chemise de luxe',2,$category1->getId(),new DateTime(),new DateTime(),'XL','rouge',500);
 var_dump($clothing);
 echo "<br>";
 echo "<br>";
-$electronic=new Electronic('TV',22);
+$electronic=new Electronic(78,'TV',['https://picsum.photos/957/300'],1000,"grand télévision",2,$category2->getId(),new DateTime(),new DateTime(),'Sony',22);
 var_dump($electronic);
-
 
