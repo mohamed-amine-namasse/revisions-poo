@@ -15,6 +15,7 @@ class Electronic extends Product
     // Constructeur
     public function __construct(string $brand,int $warranty_fee)
     {
+        parent::__construct();
         $this->brand = $brand;
         $this->warranty_fee = $warranty_fee;
         
