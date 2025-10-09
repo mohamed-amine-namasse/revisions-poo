@@ -6,7 +6,6 @@ class Clothing extends Product
     private string $color;
     private string $type;
     private int $material_fee;
-
     private string $db_server = "localhost:3306";
     private string $db_user = "root";
     private string $db_password = "";
@@ -186,16 +185,129 @@ class Clothing extends Product
         $clothings[] = $clothing;
         } }
     
-    catch (Exception $e) {
+     catch (Exception $e) {
         
         echo "Erreur lors de la récupération du produit : " . $e->getMessage();
         
-    }
-    return $clothings;
+     }
+     return $clothings;
 
     
- }
+    }
+    
+     public function create(): Clothing|false
+    {
+        try {
+            $conn = $this->getConnection();
+
+           
+             // 1. Insertion des infos dans la table "product"
+            $stmt = $conn->prepare("
+               INSERT INTO product (name, price, description, quantity, category_id, created_at, updated_at)
+                VALUES (:name, :price, :description, :quantity, :category_id, :created_at, :updated_at)
+            ");
+
+            $success = $stmt->execute([
+                ':name' => $this->getName(),
+                ':price' => $this->getPrice(),
+                ':description' => $this->getDescription(),
+                ':quantity' => $this->getQuantity(),
+                ':category_id' => $this->getCategoryId(),
+                ':created_at' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+                ':updated_at' => $this->getUpdatedAt()->format('Y-m-d H:i:s')
+               
+            ]);
+
+            if (!$success) {
+                return false;
+            }
+             // 2. Insertion des infos dans la table "clothing"
+            $stmt = $conn->prepare("
+                INSERT INTO clothing (size, color, type, material_fee,product_id)
+                VALUES (:size, :color, :type, :material_fee,:product_id)
+            ");
+           // Récupérer l'ID généré automatiquement
+            $this->setId($conn->lastInsertId());
+            $success = $stmt->execute([
+                ':size' => $this->size,
+                ':color' => $this->color,
+                ':type' => $this->type,
+                ':material_fee' => $this->material_fee,
+                ':product_id' => $this->getId()
+               
+            ]);
+
+            if (!$success) {
+                return false;
+            }
+           
+            // 3. Insérer les photos si présentes
+            if (!empty($this->getPhotos())) {
+                $photoStmt = $conn->prepare("
+                    INSERT INTO photos (filepath,product_id)
+                    VALUES ( :filepath,:product_id)
+                ");
+                
+                foreach ($this->getPhotos() as $filepath) {
+                    $photoStmt->execute([
+                        
+                        ':product_id' => $this->getId(),
+                        ':filepath' => $filepath
+                    ]);
+                }
+            }
+
+            // 4. Retourner l'objet courant avec son ID
+            // 1. Requête produit
+            $stmt = $conn->prepare("SELECT * FROM product WHERE id = :id LIMIT 1");
+            $stmt->execute([':id' => $this->getId()]);
+            $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$product) {
+                return false; // Produit non trouvé
+            }
+            
+            // 2. Requête photos du produit
+            $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id");
+            $photoStmt->execute([':id' => $this->getId()]);
+            $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $photos = [];
+            foreach ($photoData as $photo) {
+                $photos[] = $photo['filepath'];
+            }
+            // 3. Requête infos du clothing
+            $clothingStmt = $conn->prepare("SELECT * FROM clothing WHERE product_id = :id");
+            $clothingStmt->execute([':id' => $this->getId()]);
+            $clothing = $clothingStmt->fetch(PDO::FETCH_ASSOC);
+
+           
+
+
+            // Création de l'objet clothing
+            return new Clothing(
+                $product['id'],
+                $product['name'],
+                $photos,
+                $product['price'],
+                $product['description'],
+                $product['quantity'],
+                $product['category_id'],
+                new DateTime($product['created_at']),
+                new DateTime($product['updated_at']),
+                $clothing['size'],
+                $clothing['color'],
+                $clothing['material_fee']
+            );
         
+            
+
+        } catch (Exception $e) {
+            echo "Erreur lors de la création du produit : " . $e->getMessage();
+            return false;
+        }
+    }
+
     }
 
     

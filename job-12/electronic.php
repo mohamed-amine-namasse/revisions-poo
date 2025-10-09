@@ -151,52 +151,109 @@ class Electronic extends Product
         
     }
 
-     public function create(): Product|false
+      public function create(): Electronic|false
     {
         try {
             $conn = $this->getConnection();
 
-            // 1. Insertion du produit dans la table "product"
+           
+             // 1. Insertion des infos dans la table "product"
             $stmt = $conn->prepare("
-                INSERT INTO product (name, price, description, quantity, category_id, created_at, updated_at)
+               INSERT INTO product (name, price, description, quantity, category_id, created_at, updated_at)
                 VALUES (:name, :price, :description, :quantity, :category_id, :created_at, :updated_at)
             ");
 
             $success = $stmt->execute([
-                ':name' => $this->name,
-                ':price' => $this->price,
-                ':description' => $this->description,
-                ':quantity' => $this->quantity,
-                ':category_id' => $this->category_id,
-                ':created_at' => $this->createdAt->format('Y-m-d H:i:s'),
-                ':updated_at' => $this->updatedAt->format('Y-m-d H:i:s')
+                ':name' => $this->getName(),
+                ':price' => $this->getPrice(),
+                ':description' => $this->getDescription(),
+                ':quantity' => $this->getQuantity(),
+                ':category_id' => $this->getCategoryId(),
+                ':created_at' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+                ':updated_at' => $this->getUpdatedAt()->format('Y-m-d H:i:s')
+               
             ]);
 
             if (!$success) {
                 return false;
             }
+             // 2. Insertion des infos dans la table "electronic"
+            $stmt = $conn->prepare("
+                INSERT INTO electronic (brand, warranty_fee,product_id)
+                VALUES (:brand, :warranty_fee,:product_id)
+            ");
+           // Récupérer l'ID généré automatiquement
+            $this->setId($conn->lastInsertId());
+            $success = $stmt->execute([
+                ':brand' => $this->brand,
+                ':warranty_fee' => $this->warranty_fee,
+                ':product_id' => $this->getId()
+               
+            ]);
 
-            // 2. Récupérer l'ID généré automatiquement
-            $this->id = (int)$conn->lastInsertId();
-
+            if (!$success) {
+                return false;
+            }
+           
             // 3. Insérer les photos si présentes
-            if (!empty($this->photos)) {
+            if (!empty($this->getPhotos())) {
                 $photoStmt = $conn->prepare("
                     INSERT INTO photos (filepath,product_id)
                     VALUES ( :filepath,:product_id)
                 ");
-
-                foreach ($this->photos as $filepath) {
+                
+                foreach ($this->getPhotos() as $filepath) {
                     $photoStmt->execute([
                         
-                        ':product_id' => $this->id,
+                        ':product_id' => $this->getId(),
                         ':filepath' => $filepath
                     ]);
                 }
             }
 
             // 4. Retourner l'objet courant avec son ID
-            return $this;
+            // 1. Requête produit
+            $stmt = $conn->prepare("SELECT * FROM product WHERE id = :id LIMIT 1");
+            $stmt->execute([':id' => $this->getId()]);
+            $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$product) {
+                return false; // Produit non trouvé
+            }
+            
+            // 2. Requête photos du produit
+            $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id");
+            $photoStmt->execute([':id' => $this->getId()]);
+            $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $photos = [];
+            foreach ($photoData as $photo) {
+                $photos[] = $photo['filepath'];
+            }
+            // 3. Requête infos de electronic
+            $electronicStmt = $conn->prepare("SELECT * FROM electronic WHERE product_id = :id");
+            $electronicStmt->execute([':id' => $this->getId()]);
+            $electronic = $electronicStmt->fetch(PDO::FETCH_ASSOC);
+
+           
+
+
+            // Création de l'objet clothing
+            return new Electronic(
+                $product['id'],
+                $product['name'],
+                $photos,
+                $product['price'],
+                $product['description'],
+                $product['quantity'],
+                $product['category_id'],
+                new DateTime($product['created_at']),
+                new DateTime($product['updated_at']),
+                $electronic['brand'],
+                $electronic['warranty_fee']
+            );
+        
+            
 
         } catch (Exception $e) {
             echo "Erreur lors de la création du produit : " . $e->getMessage();
