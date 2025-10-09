@@ -93,17 +93,29 @@ class Electronic extends Product
 
     public function findAll():array
     {   
-        $products = [];
+        $electronics = [];
         try {
             $conn = $this->getConnection();
 
-            // 1. Requête pour recuperer tous les données des produits
-            $stmt = $conn->prepare("SELECT * FROM product ");
+            // Requête pour recuperer tous les données des clothings
+            $stmt = $conn->prepare("SELECT 
+                p.id,
+                p.name,
+                p.price,
+                p.description,
+                p.quantity,
+                p.category_id,
+                p.created_at,
+                p.updated_at,
+                e.brand,
+                e.warranty_fee
+            FROM product p
+            INNER JOIN electronic e ON p.id = e.product_id ");
             $stmt->execute();
             $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($productRows as $row) {
-            // 2. Requête photos du produit
+            // Requête photos du produit
             $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id ");
             $photoStmt->execute([':id' => $row['id']]);
             $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -113,7 +125,7 @@ class Electronic extends Product
                 $photos[] = $photo['filepath'];
             }
             // Créer une instance Product
-                $product = new Product(
+                $electronic = new Electronic(
                     $row['id'],
                     $row['name'],
                     $photos,
@@ -122,9 +134,11 @@ class Electronic extends Product
                     $row['quantity'],
                     $row['category_id'],
                     new DateTime($row['created_at']),
-                    new DateTime($row['updated_at'])
+                    new DateTime($row['updated_at']),
+                    $row['brand'],
+                    $row['warranty_fee'] 
                 );
-            $products[] = $product;
+            $electronics[] = $electronic;
             } }
         
         catch (Exception $e) {
@@ -132,7 +146,7 @@ class Electronic extends Product
             echo "Erreur lors de la récupération du produit : " . $e->getMessage();
             
         }
-        return $products;
+        return $electronics;
 
         
     }

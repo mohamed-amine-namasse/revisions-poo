@@ -136,7 +136,7 @@ class Clothing extends Product
         try {
         $conn = $this->getConnection();
 
-        // 1. Requête pour recuperer tous les données des clothings
+        // Requête pour recuperer tous les données des clothings
         $stmt = $conn->prepare("SELECT 
             p.id ,
             p.name ,
@@ -156,7 +156,7 @@ class Clothing extends Product
         $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         foreach ($productRows as $row) {
-        // 3. Requête photos du produit
+        // Requête photos du produit
         $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id ");
         $photoStmt->execute([':id' => $row['id']]);
         $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
