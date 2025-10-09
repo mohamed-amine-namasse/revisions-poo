@@ -33,7 +33,7 @@ echo "<br>";
 
 
 
-$clothing=new Clothing(null,'Pullon',['https://picsum.photos/500/3000'],220,'pullon enfant',2,4,new DateTime(),new DateTime(),'S','marron','coton',222);
+$clothing=new Clothing(null,'Djellaba',['https://picsum.photos/500/3000'],220,'djallaba enfant',2,4,new DateTime(),new DateTime(),'S','marron','coton',222);
 var_dump($clothing);
 echo "<br>";
 echo "<br>";

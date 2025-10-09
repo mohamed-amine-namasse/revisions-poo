@@ -557,19 +557,15 @@ public function update(): Product|false
 }
 
 //Partie test
-$product = new Product(null,'Jusdorange',['https://picsum.photos/957/300'],600,'Orange Juice',10,2,new DateTime(), new DateTime());
-var_dump($product);
+
+
+$product2=new Product();
+$product2 = $product2->findOneById(114);
+$product2->setName('Limonade');
+$product2->setQuantity(33);
+var_dump($product2);
 echo "<br>";
-echo "<br>";
-$product->create(); 
-//var_dump($product);
-echo "<br>";
-echo "<br>";
-$product->setName('Juicy');
-$product->setQuantity(12000);
-var_dump($product);
-echo "<br>";
-$product->update();
+$product2->update();
 
 
 
