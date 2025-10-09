@@ -67,6 +67,15 @@ class Clothing extends Product
         $this->type = $type;
     }
 
+    public function getMaterial_fee(): string
+    {
+        return $this->type;
+    }
+    public function setMaterial_fee(int $material_fee): void
+    {
+        $this->material_fee = $material_fee;
+    }
+    
     public function findOneById(int $id):Clothing|bool
     {   
 

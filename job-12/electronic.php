@@ -32,6 +32,29 @@ class Electronic extends Product
             die("Erreur de connexion PDO : " . $e->getMessage());
             }
         }
+    // Getters et Setters
+    public function getBrand(): string
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(string $brand): void
+    {
+        $this->brand = $brand;
+    }
+
+    public function getWarranty_fee(): string
+    {
+        return $this->warranty_fee;
+    }
+
+    public function setWarranty_fee(int $warranty_fee): void
+    {
+        $this->warranty_fee= $warranty_fee;
+    }
+
+
+   
     public function findOneById(int $id):Electronic|bool
     {   
 
@@ -229,7 +252,7 @@ class Electronic extends Product
             // 1. mise à jour du produit dans la table "product"
             $stmt = $conn->prepare(" UPDATE product SET name=:name,price=:price,description=:description,quantity=:quantity,category_id=:category_id,created_at=:created_at,updated_at=:updated_at WHERE id = :id ");
             $success = $stmt->execute([
-                ':id'=>$this->$this->getId(),
+                ':id'=>$this->getId(),
                 ':name' => $this->getName(),
                 ':price' => $this->getPrice(),
                 ':description' => $this->getDescription(),
@@ -260,13 +283,11 @@ class Electronic extends Product
                 }
             }
             //3. Mise à jour dans la table electronic
-            $stmt = $conn->prepare(" UPDATE electronic SET brand=:brand,warranty_fee=:warranty_fee WHERE id = :id ");
+            $stmt = $conn->prepare(" UPDATE electronic SET brand=:brand,warranty_fee=:warranty_fee WHERE product_id = :product_id ");
             $success = $stmt->execute([
-                ':size'=>$this->size,
-                ':color' => $this->color,
-                ':type' => $this->type,
-                ':material_fee' => $this->material_fee,
-                
+                ':brand'=>$this->brand,
+                ':warranty_fee' => $this->warranty_fee,
+                ':product_id'=>$this->getId()
             ]);
             // 4. Retourner l'objet courant avec son ID
             return $this;

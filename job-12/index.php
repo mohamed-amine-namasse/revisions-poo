@@ -33,16 +33,22 @@ echo "<br>";
 
 
 
-$clothing=new Clothing(null,'Djellaba',['https://picsum.photos/500/3000'],220,'djallaba enfant',2,4,new DateTime(),new DateTime(),'S','marron','coton',222);
-var_dump($clothing);
+//$clothing=new Clothing(null,'Djellaba',['https://picsum.photos/500/3000'],220,'djallaba enfant',2,4,new DateTime(),new DateTime(),'S','marron','coton',222);
+$clothing2=new Clothing();
+$clothing2 = $clothing2->findOneById(88);
+var_dump($clothing2);
+$clothing2->setName('Jacket');
+$clothing2->setcolor('violet');
+var_dump($clothing2);
 echo "<br>";
+$clothing2->update();
+
+$electronic2=new Electronic();
+$electronic2 = $electronic2->findOneById(90);
+var_dump($electronic2);
+$electronic2->setName('Smart TV');
+$electronic2->setBrand('LG');
+var_dump($electronic2);
 echo "<br>";
-$clothing->create(); 
-var_dump($clothing);
-echo "<br>";
-echo "<br>";
-$clothing->setName('Veste');
-$clothing->setColor('pink');
-var_dump($clothing);
-echo "<br>";
-$clothing->update();
+$electronic2->update();
+
