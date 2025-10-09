@@ -212,46 +212,7 @@ class Electronic extends Product
             }
 
             // 4. Retourner l'objet courant avec son ID
-            // 1. Requête produit
-            $stmt = $conn->prepare("SELECT * FROM product WHERE id = :id LIMIT 1");
-            $stmt->execute([':id' => $this->getId()]);
-            $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$product) {
-                return false; // Produit non trouvé
-            }
-            
-            // 2. Requête photos du produit
-            $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id");
-            $photoStmt->execute([':id' => $this->getId()]);
-            $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
-
-            $photos = [];
-            foreach ($photoData as $photo) {
-                $photos[] = $photo['filepath'];
-            }
-            // 3. Requête infos de electronic
-            $electronicStmt = $conn->prepare("SELECT * FROM electronic WHERE product_id = :id");
-            $electronicStmt->execute([':id' => $this->getId()]);
-            $electronic = $electronicStmt->fetch(PDO::FETCH_ASSOC);
-
-           
-
-
-            // Création de l'objet clothing
-            return new Electronic(
-                $product['id'],
-                $product['name'],
-                $photos,
-                $product['price'],
-                $product['description'],
-                $product['quantity'],
-                $product['category_id'],
-                new DateTime($product['created_at']),
-                new DateTime($product['updated_at']),
-                $electronic['brand'],
-                $electronic['warranty_fee']
-            );
+            return $this;
         
             
 
@@ -299,7 +260,7 @@ class Electronic extends Product
                 }
             }
 
-            // 4. Retourner l'objet courant avec son ID
+            // 3. Retourner l'objet courant avec son ID
             return $this;
 
         } catch (Exception $e) {

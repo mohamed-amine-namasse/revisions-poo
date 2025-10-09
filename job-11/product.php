@@ -408,7 +408,7 @@ class Product
                 }
             }
 
-            // 4. Retourner l'objet courant avec son ID
+            // 3. Retourner l'objet courant avec son ID
             return $this;
 
         } catch (Exception $e) {
