@@ -15,3 +15,6 @@ echo "<br>";
 echo "<br>";
 $electronic=new Electronic();
 var_dump($electronic->findOneById(89));
+echo "<br>";
+echo "<br>";
+var_dump($clothing->findAll());

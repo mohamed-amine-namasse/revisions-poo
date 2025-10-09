@@ -10,7 +10,7 @@ require 'electronic.php';
 $category1=new Category(4,'Vêtements', 'tous les vêtements');
 $category2=new Category(1,'Electronique', 'Produits électroniques divers');
 
-$clothing=new Clothing(77,'chemise',['https://picsum.photos/988/300'],100,'chemise de luxe',2,$category1->getId(),new DateTime(),new DateTime(),'XL','rouge',500);
+$clothing=new Clothing(77,'jean',['https://picsum.photos/988/300'],100,'jean de luxe',2,$category1->getId(),new DateTime(),new DateTime(),'XL','rouge','pantalon',500);
 var_dump($clothing);
 echo "<br>";
 echo "<br>";

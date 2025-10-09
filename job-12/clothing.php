@@ -131,150 +131,76 @@ class Clothing extends Product
 
     public function findAll():array
     {   
-        $products = [];
+        $clothings = [];
         try {
-            $conn = $this->getConnection();
+        $conn = $this->getConnection();
 
-            // 1. Requête pour recuperer tous les données des produits
-            $stmt = $conn->prepare("SELECT * FROM product ");
-            $stmt->execute();
-            $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach ($productRows as $row) {
-            // 2. Requête photos du produit
-            $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id ");
-            $photoStmt->execute([':id' => $row['id']]);
-            $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
-
-            $photos = [];
-            foreach ($photoData as $photo) {
-                $photos[] = $photo['filepath'];
-            }
-            // Créer une instance Product
-                $product = new Product(
-                    $row['id'],
-                    $row['name'],
-                    $photos,
-                    $row['price'],
-                    $row['description'],
-                    $row['quantity'],
-                    $row['category_id'],
-                    new DateTime($row['created_at']),
-                    new DateTime($row['updated_at'])
-                );
-            $products[] = $product;
-            } }
+        // 1. Requête pour recuperer tous les données des clothings
+        $stmt = $conn->prepare("SELECT 
+            p.id ,
+            p.name ,
+            p.price,
+            p.description,
+            p.quantity,
+            p.category_id,
+            p.created_at,
+            p.updated_at,
+            c.size,
+            c.color,
+            c.type,
+            c.material_fee
+        FROM product p
+        INNER JOIN clothing c ON p.id = c.product_id ");
+        $stmt->execute();
+        $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        catch (Exception $e) {
-            
-            echo "Erreur lors de la récupération du produit : " . $e->getMessage();
-            
-        }
-        return $products;
+        //print_r($productRows);
+        foreach ($productRows as $row) {
+        // 3. Requête photos du produit
+        $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id ");
+        $photoStmt->execute([':id' => $row['id']]);
+        $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
 
+        $photos = [];
+        foreach ($photoData as $photo) {
+            $photos[] = $photo['filepath'];
+        }
+        
+      var_dump($row['material_fee']);
+       
+        // Créer une instance clothing
+            $clothing = new Clothing(
+                $row['id'],
+                $row['name'],
+                $photos,
+                $row['price'],
+                $row['description'],
+                $row['quantity'],
+                $row['category_id'],
+                new DateTime($row['created_at']),
+                new DateTime($row['updated_at']),
+                $row['size'],
+                $row['color'],
+                $row['type'],
+               (int) $row['material_fee']
+            );
+        $clothings[] = $clothing;
+        } }
+    
+    catch (Exception $e) {
+        
+        echo "Erreur lors de la récupération du produit : " . $e->getMessage();
+        
+    }
+    return $clothings;
+
+    
+ }
         
     }
 
-     public function create(): Product|false
-    {
-        try {
-            $conn = $this->getConnection();
-
-            // 1. Insertion du produit dans la table "product"
-            $stmt = $conn->prepare("
-                INSERT INTO product (name, price, description, quantity, category_id, created_at, updated_at)
-                VALUES (:name, :price, :description, :quantity, :category_id, :created_at, :updated_at)
-            ");
-
-            $success = $stmt->execute([
-                ':name' => $this->name,
-                ':price' => $this->price,
-                ':description' => $this->description,
-                ':quantity' => $this->quantity,
-                ':category_id' => $this->category_id,
-                ':created_at' => $this->createdAt->format('Y-m-d H:i:s'),
-                ':updated_at' => $this->updatedAt->format('Y-m-d H:i:s')
-            ]);
-
-            if (!$success) {
-                return false;
-            }
-
-            // 2. Récupérer l'ID généré automatiquement
-            $this->id = (int)$conn->lastInsertId();
-
-            // 3. Insérer les photos si présentes
-            if (!empty($this->photos)) {
-                $photoStmt = $conn->prepare("
-                    INSERT INTO photos (filepath,product_id)
-                    VALUES ( :filepath,:product_id)
-                ");
-
-                foreach ($this->photos as $filepath) {
-                    $photoStmt->execute([
-                        
-                        ':product_id' => $this->id,
-                        ':filepath' => $filepath
-                    ]);
-                }
-            }
-
-            // 4. Retourner l'objet courant avec son ID
-            return $this;
-
-        } catch (Exception $e) {
-            echo "Erreur lors de la création du produit : " . $e->getMessage();
-            return false;
-        }
-    }
-    public function update(): Product|false
-    {
-        try {
-            $conn = $this->getConnection();
-
-            // 1. mise à jour du produit dans la table "product"
-            $stmt = $conn->prepare(" UPDATE product SET name=:name,price=:price,description=:description,quantity=:quantity,category_id=:category_id,created_at=:created_at,updated_at=:updated_at WHERE id = :id ");
-            $success = $stmt->execute([
-                ':id'=>$this->id,
-                ':name' => $this->name,
-                ':price' => $this->price,
-                ':description' => $this->description,
-                ':quantity' => $this->quantity,
-                ':category_id' => $this->category_id,
-                ':created_at' => $this->createdAt->format('Y-m-d H:i:s'),
-                ':updated_at' => $this->updatedAt->format('Y-m-d H:i:s')
-            ]);
-
-            if (!$success) {
-                return false;
-            }
-
-            
-            
-            // 2.Mise à jour des photos 
-            if (!empty($this->photos)) {
-                $photoStmt = $conn->prepare("
-                    UPDATE  photos SET filepath=:filepath WHERE product_id=:product_id
-                ");
-
-                foreach ($this->photos as $filepath) {
-                    $photoStmt->execute([
-                        ':product_id' => $this->id,
-                        ':filepath' => $filepath
-                        
-                    ]);
-                }
-            }
-
-            // 4. Retourner l'objet courant avec son ID
-            return $this;
-
-        } catch (Exception $e) {
-            echo "Erreur lors de la création du produit : " . $e->getMessage();
-            return false;
-        }
-    }
+    
     
 
-}
+
 
