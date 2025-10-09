@@ -308,13 +308,13 @@ class Clothing extends Product
                 }
             }
             //3. Mise à jour dans la table clothing
-            $stmt = $conn->prepare(" UPDATE clothing SET size=:size,color=:color,type=:type,material_fee=:material_fee WHERE id = :id ");
+            $stmt = $conn->prepare(" UPDATE clothing SET size=:size,color=:color,type=:type,material_fee=:material_fee WHERE product_id = :product_id ");
             $success = $stmt->execute([
                 ':size'=>$this->size,
                 ':color' => $this->color,
                 ':type' => $this->type,
                 ':material_fee' => $this->material_fee,
-                
+                ':product_id'=>$this->getId()
             ]);
             // 4. Retourner l'objet courant avec son ID
             return $this;

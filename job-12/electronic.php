@@ -221,7 +221,7 @@ class Electronic extends Product
             return false;
         }
     }
-    public function update(): Product|false
+    public function update(): Electronic|false
     {
         try {
             $conn = $this->getConnection();
@@ -229,14 +229,14 @@ class Electronic extends Product
             // 1. mise à jour du produit dans la table "product"
             $stmt = $conn->prepare(" UPDATE product SET name=:name,price=:price,description=:description,quantity=:quantity,category_id=:category_id,created_at=:created_at,updated_at=:updated_at WHERE id = :id ");
             $success = $stmt->execute([
-                ':id'=>$this->id,
-                ':name' => $this->name,
-                ':price' => $this->price,
-                ':description' => $this->description,
-                ':quantity' => $this->quantity,
-                ':category_id' => $this->category_id,
-                ':created_at' => $this->createdAt->format('Y-m-d H:i:s'),
-                ':updated_at' => $this->updatedAt->format('Y-m-d H:i:s')
+                ':id'=>$this->$this->getId(),
+                ':name' => $this->getName(),
+                ':price' => $this->getPrice(),
+                ':description' => $this->getDescription(),
+                ':quantity' => $this->getQuantity(),
+                ':category_id' => $this->getCategoryId(),
+                ':created_at' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+                ':updated_at' => $this->getUpdatedAt()->format('Y-m-d H:i:s')
             ]);
 
             if (!$success) {
@@ -251,16 +251,24 @@ class Electronic extends Product
                     UPDATE  photos SET filepath=:filepath WHERE product_id=:product_id
                 ");
 
-                foreach ($this->photos as $filepath) {
+                foreach ($this->getPhotos() as $filepath) {
                     $photoStmt->execute([
-                        ':product_id' => $this->id,
+                        ':product_id' => $this->getId(),
                         ':filepath' => $filepath
                         
                     ]);
                 }
             }
-
-            // 3. Retourner l'objet courant avec son ID
+            //3. Mise à jour dans la table electronic
+            $stmt = $conn->prepare(" UPDATE electronic SET brand=:brand,warranty_fee=:warranty_fee WHERE id = :id ");
+            $success = $stmt->execute([
+                ':size'=>$this->size,
+                ':color' => $this->color,
+                ':type' => $this->type,
+                ':material_fee' => $this->material_fee,
+                
+            ]);
+            // 4. Retourner l'objet courant avec son ID
             return $this;
 
         } catch (Exception $e) {

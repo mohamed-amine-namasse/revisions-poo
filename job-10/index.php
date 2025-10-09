@@ -549,7 +549,7 @@ public function update(): Product|false
         return $this;
 
     } catch (Exception $e) {
-        echo "Erreur lors de la création du produit : " . $e->getMessage();
+        echo "Erreur lors de la mise à jour du produit : " . $e->getMessage();
         return false;
     }
 }
