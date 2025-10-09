@@ -277,7 +277,7 @@ class Clothing extends Product
             // 1. mise à jour du produit dans la table "product"
             $stmt = $conn->prepare(" UPDATE product SET name=:name,price=:price,description=:description,quantity=:quantity,category_id=:category_id,created_at=:created_at,updated_at=:updated_at WHERE id = :id ");
             $success = $stmt->execute([
-                ':id'=>$this->$this->getId(),
+                ':id'=>$this->getId(),
                 ':name' => $this->getName(),
                 ':price' => $this->getPrice(),
                 ':description' => $this->getDescription(),

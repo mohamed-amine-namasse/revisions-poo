@@ -557,16 +557,16 @@ public function update(): Product|false
 }
 
 //Partie test
-$product = new Product(null,'Jus',['https://picsum.photos/957/300'],600,'Orange Juice',10,2,new DateTime(), new DateTime());
+$product = new Product(null,'Jusdorange',['https://picsum.photos/957/300'],600,'Orange Juice',10,2,new DateTime(), new DateTime());
 var_dump($product);
 echo "<br>";
 echo "<br>";
 $product->create(); 
-var_dump($product);
+//var_dump($product);
 echo "<br>";
 echo "<br>";
-$product->setName('Juice');
-$product->setQuantity(2);
+$product->setName('Juicy');
+$product->setQuantity(12000);
 var_dump($product);
 echo "<br>";
 $product->update();
