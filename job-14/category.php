@@ -110,7 +110,7 @@ class Category
             foreach ($photoRows as $photo) {
                 $photos[] = $photo['filepath'];
             }
-            $product = new Product(
+            $product = new AbstractProduct(
                 $data['id'],
                 $data['name'],
                 $photos,

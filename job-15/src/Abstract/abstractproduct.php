@@ -1,4 +1,10 @@
 <?php
+namespace App\Abstract;
+use PDO;
+use PDOException;
+use DateTime;
+use Category;
+use Exception;
 abstract class AbstractProduct
 {
         private int $id = 58;

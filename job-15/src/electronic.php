@@ -7,14 +7,12 @@ use PDOException;
 use Exception;
 use DateTime;
 require_once 'StockableInterface.php';
-class Clothing extends AbstractProduct implements StockableInterface
+class Electronic extends AbstractProduct implements StockableInterface
 {
    
-    private string $size;
+    private string $brand;
     private int $stock = 0; 
-    private string $color;
-    private string $type;
-    private int $material_fee;
+    private int $warranty_fee;
     private string $db_server = "localhost:3306";
     private string $db_user = "root";
     private string $db_password = "";
@@ -22,14 +20,12 @@ class Clothing extends AbstractProduct implements StockableInterface
     
     
 
-    // Constructeur
-    public function __construct(int|null $id = 0, string $name = "", array $photos = [], int $price = 0, string $description = "", int $quantity = 0,int $category_id = 0, DateTime $createdAt = new DateTime(),DateTime $updatedAt = new DateTime(),string $size="",string $color="",string $type="",int $material_fee=0)
+      // Constructeur
+    public function __construct(int|null $id = 0, string $name = "", array $photos = [], int $price = 0, string $description = "", int $quantity = 0,int $category_id = 0, DateTime $createdAt = new DateTime(),DateTime $updatedAt = new DateTime(),string $brand="",int $warranty_fee=0)
     {
         parent::__construct($id,$name,$photos,$price,$description,$quantity,$category_id,$createdAt,$updatedAt);
-        $this->size = $size;
-        $this->color = $color;
-        $this->type=$type;
-        $this->material_fee = $material_fee;
+        $this->brand = $brand;
+        $this->warranty_fee = $warranty_fee;
         
     }
     // Méthode privée pour obtenir une connexion PDO
@@ -44,59 +40,37 @@ class Clothing extends AbstractProduct implements StockableInterface
             die("Erreur de connexion PDO : " . $e->getMessage());
             }
         }
-    
-     // Getters et Setters
+    // Getters et Setters
      public function getName(): string {
         return $this->name;
     }
-
     public function getPhotos(): array
     {
          return $this->photos;
     }
-
-
-    public function getSize(): string
+    public function getBrand(): string
     {
-        return $this->size;
+        return $this->brand;
     }
 
-    public function setSize(string $size): void
+    public function setBrand(string $brand): void
     {
-        $this->size = $size;
+        $this->brand = $brand;
     }
 
-    public function getColor(): string
+    public function getWarranty_fee(): string
     {
-        return $this->color;
+        return $this->warranty_fee;
     }
 
-    public function setColor(string $color): void
+    public function setWarranty_fee(int $warranty_fee): void
     {
-        $this->color= $color;
+        $this->warranty_fee= $warranty_fee;
     }
 
 
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): void
-    {
-        $this->type = $type;
-    }
-
-    public function getMaterial_fee(): string
-    {
-        return $this->type;
-    }
-    public function setMaterial_fee(int $material_fee): void
-    {
-        $this->material_fee = $material_fee;
-    }
-    
-    public function findOneById(int $id):Clothing|bool
+   
+    public function findOneById(int $id):Electronic|bool
     {   
 
         try {
@@ -120,16 +94,13 @@ class Clothing extends AbstractProduct implements StockableInterface
             foreach ($photoData as $photo) {
                 $photos[] = $photo['filepath'];
             }
-            // 3. Requête infos du clothing
-            $clothingStmt = $conn->prepare("SELECT * FROM clothing WHERE product_id = :id");
-            $clothingStmt->execute([':id' => $id]);
-            $clothing = $clothingStmt->fetch(PDO::FETCH_ASSOC);
+            // 3. Requête infos de electronic
+            $electonicStmt = $conn->prepare("SELECT * FROM electronic WHERE product_id = :id");
+            $electonicStmt->execute([':id' => $id]);
+            $electronic = $electonicStmt->fetch(PDO::FETCH_ASSOC);  
 
-           
-
-
-            // Création de l'objet clothing
-            return new Clothing(
+            // Création de l'objet product
+            return new Electronic(
                 $product['id'],
                 $product['name'],
                 $photos,
@@ -139,9 +110,9 @@ class Clothing extends AbstractProduct implements StockableInterface
                 $product['category_id'],
                 new DateTime($product['created_at']),
                 new DateTime($product['updated_at']),
-                $clothing['size'],
-                $clothing['color'],
-                $clothing['material_fee']
+                $electronic['brand'],
+                $electronic['warranty_fee']
+              
             );
         
             
@@ -160,71 +131,65 @@ class Clothing extends AbstractProduct implements StockableInterface
 
     public function findAll():array
     {   
-        $clothings = [];
+        $electronics = [];
         try {
-        $conn = $this->getConnection();
+            $conn = $this->getConnection();
 
-        // Requête pour recuperer tous les données des clothings
-        $stmt = $conn->prepare("SELECT 
-            p.id ,
-            p.name ,
-            p.price,
-            p.description,
-            p.quantity,
-            p.category_id,
-            p.created_at,
-            p.updated_at,
-            c.size,
-            c.color,
-            c.type,
-            c.material_fee
-        FROM product p
-        INNER JOIN clothing c ON p.id = c.product_id ");
-        $stmt->execute();
-        $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // Requête pour recuperer tous les données des clothings
+            $stmt = $conn->prepare("SELECT 
+                p.id,
+                p.name,
+                p.price,
+                p.description,
+                p.quantity,
+                p.category_id,
+                p.created_at,
+                p.updated_at,
+                e.brand,
+                e.warranty_fee
+            FROM product p
+            INNER JOIN electronic e ON p.id = e.product_id ");
+            $stmt->execute();
+            $productRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($productRows as $row) {
+            // Requête photos du produit
+            $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id ");
+            $photoStmt->execute([':id' => $row['id']]);
+            $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $photos = [];
+            foreach ($photoData as $photo) {
+                $photos[] = $photo['filepath'];
+            }
+            // Créer une instance Product
+                $electronic = new Electronic(
+                    $row['id'],
+                    $row['name'],
+                    $photos,
+                    $row['price'],
+                    $row['description'],
+                    $row['quantity'],
+                    $row['category_id'],
+                    new DateTime($row['created_at']),
+                    new DateTime($row['updated_at']),
+                    $row['brand'],
+                    $row['warranty_fee'] 
+                );
+            $electronics[] = $electronic;
+            } }
         
-        foreach ($productRows as $row) {
-        // Requête photos du produit
-        $photoStmt = $conn->prepare("SELECT filepath FROM photos WHERE product_id = :id ");
-        $photoStmt->execute([':id' => $row['id']]);
-        $photoData = $photoStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $photos = [];
-        foreach ($photoData as $photo) {
-            $photos[] = $photo['filepath'];
+        catch (Exception $e) {
+            
+            echo "Erreur lors de la récupération du produit : " . $e->getMessage();
+            
         }
-        
-       
-        // Créer une instance clothing
-            $clothing = new Clothing(
-                $row['id'],
-                $row['name'],
-                $photos,
-                $row['price'],
-                $row['description'],
-                $row['quantity'],
-                $row['category_id'],
-                new DateTime($row['created_at']),
-                new DateTime($row['updated_at']),
-                $row['size'],
-                $row['color'],
-                $row['type'],
-                $row['material_fee']
-            );
-        $clothings[] = $clothing;
-        } }
-    
-     catch (Exception $e) {
-        
-        echo "Erreur lors de la récupération du produit : " . $e->getMessage();
-        
-     }
-     return $clothings;
+        return $electronics;
 
-    
+        
     }
-    
-     public function create(): Clothing|false
+
+      public function create(): Electronic|false
     {
         try {
             $conn = $this->getConnection();
@@ -250,18 +215,16 @@ class Clothing extends AbstractProduct implements StockableInterface
             if (!$success) {
                 return false;
             }
-             // 2. Insertion des infos dans la table "clothing"
+             // 2. Insertion des infos dans la table "electronic"
             $stmt = $conn->prepare("
-                INSERT INTO clothing (size, color, type, material_fee,product_id)
-                VALUES (:size, :color, :type, :material_fee,:product_id)
+                INSERT INTO electronic (brand, warranty_fee,product_id)
+                VALUES (:brand, :warranty_fee,:product_id)
             ");
            // Récupérer l'ID généré automatiquement
             $this->setId($conn->lastInsertId());
             $success = $stmt->execute([
-                ':size' => $this->size,
-                ':color' => $this->color,
-                ':type' => $this->type,
-                ':material_fee' => $this->material_fee,
+                ':brand' => $this->brand,
+                ':warranty_fee' => $this->warranty_fee,
                 ':product_id' => $this->getId()
                
             ]);
@@ -287,9 +250,8 @@ class Clothing extends AbstractProduct implements StockableInterface
             }
 
             // 4. Retourner l'objet courant avec son ID
-            
             return $this;
-               
+        
             
 
         } catch (Exception $e) {
@@ -297,8 +259,7 @@ class Clothing extends AbstractProduct implements StockableInterface
             return false;
         }
     }
-
-    public function update(): Clothing|false
+    public function update(): Electronic|false
     {
         try {
             $conn = $this->getConnection();
@@ -336,13 +297,11 @@ class Clothing extends AbstractProduct implements StockableInterface
                     ]);
                 }
             }
-            //3. Mise à jour dans la table clothing
-            $stmt = $conn->prepare(" UPDATE clothing SET size=:size,color=:color,type=:type,material_fee=:material_fee WHERE product_id = :product_id ");
+            //3. Mise à jour dans la table electronic
+            $stmt = $conn->prepare(" UPDATE electronic SET brand=:brand,warranty_fee=:warranty_fee WHERE product_id = :product_id ");
             $success = $stmt->execute([
-                ':size'=>$this->size,
-                ':color' => $this->color,
-                ':type' => $this->type,
-                ':material_fee' => $this->material_fee,
+                ':brand'=>$this->brand,
+                ':warranty_fee' => $this->warranty_fee,
                 ':product_id'=>$this->getId()
             ]);
             // 4. Retourner l'objet courant avec son ID
@@ -353,7 +312,7 @@ class Clothing extends AbstractProduct implements StockableInterface
             return false;
         }
     }
-
+    
      public function addStocks(int $stock): self {
         $this->stock += $stock;
         return $this;
@@ -364,13 +323,10 @@ class Clothing extends AbstractProduct implements StockableInterface
         $this->stock = max(0, $this->stock - $stock);
         return $this;
     }
+
      public function getStock(): int {
         return $this->stock;
     }
-    
-    }
-
-    
-    
 
 
+}

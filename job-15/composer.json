@@ -1,0 +1,15 @@
+{
+  "name": "dell/job-15",
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "mohamed-amine-namasse",
+      "email": "namasse.medamine@laplateforme.io"
+    }
+  ],
+  "require": {}
+}

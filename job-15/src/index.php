@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
+namespace App;
+use DateTime;
 date_default_timezone_set('Europe/Paris');
 
-require 'abstractproduct.php';
-require 'category.php';
-require 'clothing.php';
-require 'electronic.php';
 
 
+require __DIR__ . '/vendor/autoload.php';
+use App;
 
 $manteau=new Clothing(null,'manteau',['https://picsum.photos/9000/3000'],220,'manteau enfant',2,4,new DateTime(),new DateTime(),'S','vert','coton',222);
 var_dump($manteau->addStocks(50));//on ajoute 50 au stock de manteau

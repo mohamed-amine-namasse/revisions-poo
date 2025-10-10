@@ -1,4 +1,10 @@
 <?php
+namespace App;
+use App\Abstract\AbstractProduct;
+use PDO;
+use PDOException;
+use DateTime;
+use Exception;
 class Category
 {
     private int $id = 58;
@@ -110,7 +116,7 @@ class Category
             foreach ($photoRows as $photo) {
                 $photos[] = $photo['filepath'];
             }
-            $product = new Product(
+            $product = new AbstractProduct(
                 $data['id'],
                 $data['name'],
                 $photos,
