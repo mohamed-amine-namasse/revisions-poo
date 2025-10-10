@@ -1,5 +1,5 @@
 <?php
-class Electronic extends Product
+class Electronic extends AbstractProduct
 {
    
     private string $brand;

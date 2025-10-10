@@ -1,5 +1,5 @@
 <?php
-abstract class Product
+abstract class AbstractProduct
 {
         private int $id = 58;
         protected string $name;
@@ -214,7 +214,7 @@ abstract class Product
             'updatedAt'=> $this-> updatedAt
             ];
         }
-        public function findOneById(int $id):Product|bool
+        public function findOneById(int $id):AbstractProduct|bool
     {   
 
         try {
@@ -240,7 +240,7 @@ abstract class Product
             }
 
             // Création de l'objet product
-            return new Product(
+            return new AbstractProduct(
                 $product['id'],
                 $product['name'],
                 $photos,
@@ -287,7 +287,7 @@ abstract class Product
                 $photos[] = $photo['filepath'];
             }
             // Créer une instance Product
-                $product = new Product(
+                $product = new AbstractProduct(
                     $row['id'],
                     $row['name'],
                     $photos,
@@ -312,7 +312,7 @@ abstract class Product
     }
 
         
-        public function create(): Product|false
+        public function create(): AbstractProduct|false
     {
         try {
             $conn = $this->getConnection();
@@ -364,7 +364,7 @@ abstract class Product
             return false;
         }
     }
-    public function update(): Product|false
+    public function update(): AbstractProduct|false
     {
         try {
             $conn = $this->getConnection();

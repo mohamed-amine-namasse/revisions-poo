@@ -1,6 +1,6 @@
 <?php
 require_once 'StockableInterface.php';
-class Electronic extends Product implements StockableInterface
+class Electronic extends AbstractProduct implements StockableInterface
 {
    
     private string $brand;
