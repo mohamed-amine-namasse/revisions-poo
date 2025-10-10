@@ -6,14 +6,14 @@ echo "<br>";
 echo "<br>";
 echo $obj->getId();//on recupère l'id
 echo "<br>";
-echo $obj->setId(90);//on modifie l'id
+$obj->setId(90);//on modifie l'id
 echo "<br>";
 echo $obj->getId();//on recupère l'id
 echo "<br>";
 echo "<br>";
 echo $obj->getName();//on recupère le nom
 echo "<br>";
-echo $obj->setName("Portable");//on modifie le nom
+$obj->setName("Portable");//on modifie le nom
 echo "<br>";
 echo $obj->getName();//on recupère le nom
 echo "<br>";
@@ -27,21 +27,21 @@ echo "<br>";
 echo "<br>";
 echo $obj->getPrice();//on recupère le prix
 echo "<br>";
-echo $obj->setPrice(1000);//on modifie le prix
+$obj->setPrice(1000);//on modifie le prix
 echo "<br>";
 echo $obj->getPrice();//on recupère le prix
 echo "<br>";
 echo "<br>";
 echo $obj->getDescription();//on recupère la description
 echo "<br>";
-echo $obj->setDescription("fff");//on modifie la description
+$obj->setDescription("fff");//on modifie la description
 echo "<br>";
 echo $obj->getDescription();//on recupère la description
 echo "<br>";
 echo "<br>";
 echo $obj->getQuantity();//on recupère la quantité
 echo "<br>";
-echo $obj->setQuantity(8);//on modifie la quantité
+$obj->setQuantity(8);//on modifie la quantité
 echo "<br>";
 echo $obj->getQuantity();//on recupère la quantité
 echo "<br>";
