@@ -33,6 +33,13 @@ class Electronic extends Product
             }
         }
     // Getters et Setters
+     public function getName(): string {
+        return $this->name;
+    }
+    public function getPhotos(): array
+    {
+         return $this->photos;
+    }
     public function getBrand(): string
     {
         return $this->brand;

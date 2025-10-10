@@ -1,9 +1,9 @@
 <?php
-class Product
+abstract class Product
 {
         private int $id = 58;
-        private string $name;
-        private array $photos;
+        protected string $name;
+        protected array $photos;
         private int  $price;
         private string $description;
         private int $quantity;
@@ -94,20 +94,15 @@ class Product
             $this->id = $id;
         }
 
-        public function getName(): string
-        {
-            return $this->name;
-        }
-
+        abstract public function getName(): string; // on transforme getName en méthode abstraite
+       
         public function setName(string $name): void
         {
             $this->name = $name;
         }
 
-        public function getPhotos(): array
-        {
-            return $this->photos;
-        }
+        abstract public function getPhotos(): array; // on transforme getName en méthode abstraite
+        
 
         public function setPhotos(array $photos): void
         {

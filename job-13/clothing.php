@@ -36,6 +36,16 @@ class Clothing extends Product
             }
         }
      // Getters et Setters
+     public function getName(): string {
+        return $this->name;
+    }
+
+    public function getPhotos(): array
+    {
+         return $this->photos;
+    }
+
+
     public function getSize(): string
     {
         return $this->size;
