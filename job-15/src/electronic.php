@@ -6,7 +6,7 @@ use PDO;
 use PDOException;
 use Exception;
 use DateTime;
-require_once 'StockableInterface.php';
+
 class Electronic extends AbstractProduct implements StockableInterface
 {
    

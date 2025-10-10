@@ -6,8 +6,8 @@ date_default_timezone_set('Europe/Paris');
 
 
 
-require __DIR__ . '/vendor/autoload.php';
-use App;
+require_once __DIR__ . '/vendor/autoload.php';
+
 
 $manteau=new Clothing(null,'manteau',['https://picsum.photos/9000/3000'],220,'manteau enfant',2,4,new DateTime(),new DateTime(),'S','vert','coton',222);
 var_dump($manteau->addStocks(50));//on ajoute 50 au stock de manteau
